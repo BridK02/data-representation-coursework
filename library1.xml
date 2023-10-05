@@ -1,0 +1,28 @@
+Copy code
+<?xml version="1.0" encoding="UTF-8"?>
+<library>
+    <catalogue name="Technical Books">
+        <book>
+            <ISBN>9781950496358</ISBN>
+            <title>Technical Training Basics, 2nd Ed</title>
+            <author>Wakefield, Sarah</author>
+        </book>
+        <book>
+            <ISBN>9780262028134</ISBN>
+            <title>Category Theory for the Sciences (Mit Press)</title>
+            <author>Spivak, David I.</author>
+        </book>
+    </catalogue>
+    <catalogue name="Cookery Books">
+        <book>
+            <ISBN>9780471456414</ISBN>
+            <title>Practical Cookery: A Compilation of Principles of Cookery and Recipes</title>
+            <author>Kansas State University - Kansas</author>
+        </book>
+        <book>
+            <ISBN>9781910904619</ISBN>
+            <title>Miso Tasty: Everyday, tasty recipes with miso – the Japanese superfood</title>
+            <author>Chung, Bonnie</author>
+        </book>
+    </catalogue>
+</library>
