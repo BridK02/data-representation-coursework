@@ -8,7 +8,7 @@
 #Upload your .xml file to your github repository called data-representation-coursework and copy your link here:
 
 
-#Library 1 is manually created, library 2 contains the same book but is generated using minidom
+#Library 1 is manually created, library 2 contains the same book but is generated using minidom>
 #Retrieved some technial and cookery book details from https://isbnsearch.org/search?s=category+technical
 #Technical Training Basics, 2nd Ed,Author: Wakefield, Sarah, ISBN-13: 9781950496358
 #Category Theory for the Sciences (Mit Press), Author: Spivak, David I., ISBN-13: 9780262028134
