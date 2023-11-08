@@ -27,13 +27,11 @@ def replace_text_in_file(file_contents, old_text, new_text):
 
     return file_contents.replace(old_text, new_text)
 
-def commit_and_push_changes(repo, file_path, commit_message, new_file_contents):
+def commit_and_push_changes(repo, file_path, commit_message):
+    # Commits and pushes changes to a Git repository.
+
     # Stage the changes to the file.
     repo.git.add(file_path)
-
-    # Write the modified file contents to the file.
-    with open(file_path, 'w') as f:
-        f.write(new_file_contents)
 
     # Commit the changes.
     repo.git.commit(m=commit_message)
@@ -46,7 +44,7 @@ def main():
     repo_owner = input("Enter the repository owner (e.g., BridK02): ")
     repo_name = input("Enter the repository name (e.g., data-representation-coursework): ")
     branch = input("Enter the branch name (e.g., main): ")
-    file_path = input("Enter the path to the file to modify (e.g., Assignments/Assignment4.0/test.txt): ")
+    file_path = input("Enter the path to the file to modify (e.g., Assignments/Assignment 4.0/test.txt): ")
 
     # Clone the repository or open an existing repository.
     repo_url = f"{repo_owner}/{repo_name}"
