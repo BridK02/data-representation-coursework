@@ -6,8 +6,10 @@
 
 import requests
 import git
+import os
 import base64
 from config import config as cfg
+
 
 def read_file_from_github(repo_url, branch, file_path):
     # Reads a file from a GitHub repository.
@@ -24,7 +26,7 @@ def read_file_from_github(repo_url, branch, file_path):
     else:
         print("Error accessing the file via the GitHub API")
         return None
-    
+
 
 def replace_text_in_file(file_contents, old_text, new_text):
     # Replaces all instances of a given text string in a file.
@@ -32,24 +34,21 @@ def replace_text_in_file(file_contents, old_text, new_text):
 
     return file_contents.replace(old_text, new_text)
 
-def commit_and_push_changes(repo, file_path, commit_message):
-    # Commits and pushes changes to a Git repository. Stage only the target file for commit.
-    repo.git.add(file_path)
+
+def commit_and_push_changes(repo, relative_file_path, commit_message, new_file_contents):
+    # Stage the changes to the file.
+    repo.index.add(relative_file_path)
+
+    # Write the updated content back to the local file.
+    with open(relative_file_path, 'w') as file:
+        file.write(new_file_contents)
 
     # Commit the changes.
-    try:
-        repo.git.commit(m=commit_message, a=True)
-    except git.exc.GitCommandError as e:
-        print(f"Commit failed: {e}")
-        return
+    repo.index.commit(commit_message)
 
     # Push the changes to the remote repository.
-    try:
-        repo.git.push()
-        print("Changes successfully pushed to the remote repository.")
-    except git.exc.GitCommandError as e:
-        print(f"Push failed: {e}")
-
+    origin = repo.remote(name='origin')
+    origin.push()
 
 
 def main():
@@ -57,11 +56,20 @@ def main():
     repo_owner = input("Enter the repository owner (e.g., BridK02): ")
     repo_name = input("Enter the repository name (e.g., data-representation-coursework): ")
     branch = input("Enter the branch name (e.g., main): ")
+
+    # Make sure the file exists before proceeding.
     file_path = input("Enter the path to the file to modify (e.g., Assignments/Assignment 4.0/test.txt): ")
+    if not os.path.exists(file_path):
+        print(f"Error: The file '{file_path}' does not exist.")
+        return
 
     # Clone the repository or open an existing repository.
     repo_url = f"{repo_owner}/{repo_name}"
     repo = git.Repo(f"C:/Users/bridc/repo/{repo_name}")
+
+    # Construct the absolute file path and relative file path.
+    absolute_file_path = os.path.abspath(file_path).replace("\\", "/")
+    relative_file_path = absolute_file_path.replace(repo.working_tree_dir + "\\", "")
 
     # Read the file from the repository.
     file_contents = read_file_from_github(repo_url, branch, file_path)
@@ -69,12 +77,9 @@ def main():
     # Replace all instances of the text "Andrew" with your name.
     new_file_contents = replace_text_in_file(file_contents, "Andrew", "Brid")
 
-    # Debug: print the new content
-    print("New File Contents:")
-    print(new_file_contents)
+    # Stage and commit the changes using the relative file path.
+    commit_and_push_changes(repo, relative_file_path, "Replaced all instances of the text 'Andrew' with 'Brid'.", new_file_contents)
 
-    # Stage and commit the changes.
-    commit_and_push_changes(repo, file_path, "Replaced all instances of the text 'Andrew' with 'Brid'.")
 
 if __name__ == "__main__":
     main()
