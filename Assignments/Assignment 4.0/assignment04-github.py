@@ -6,6 +6,7 @@
 
 import requests
 import git
+import base64
 from config import config as cfg
 
 def read_file_from_github(repo_url, branch, file_path):
@@ -15,11 +16,15 @@ def read_file_from_github(repo_url, branch, file_path):
     headers = {
         "Authorization": f"token {cfg['github_api_token']}"
     }
-    response = requests.get(
-        f"https://raw.githubusercontent.com/{repo_url}/{branch}/{file_path}",
-        headers=headers
-    )
-    return response.content.decode()
+    url = f"https://api.github.com/repos/{repo_url}/contents/{file_path}"
+    response = requests.get(url, headers=headers)
+    if response.status_code == 200:
+        file_content = response.json()["content"]
+        return base64.b64decode(file_content).decode("utf-8")
+    else:
+        print("Error accessing the file via the GitHub API")
+        return None
+    
 
 def replace_text_in_file(file_contents, old_text, new_text):
     # Replaces all instances of a given text string in a file.
@@ -28,16 +33,24 @@ def replace_text_in_file(file_contents, old_text, new_text):
     return file_contents.replace(old_text, new_text)
 
 def commit_and_push_changes(repo, file_path, commit_message):
-    # Commits and pushes changes to a Git repository.
-
-    # Stage the changes to the file.
+    # Commits and pushes changes to a Git repository. Stage only the target file for commit.
     repo.git.add(file_path)
 
     # Commit the changes.
-    repo.git.commit(m=commit_message)
+    try:
+        repo.git.commit(m=commit_message, a=True)
+    except git.exc.GitCommandError as e:
+        print(f"Commit failed: {e}")
+        return
 
     # Push the changes to the remote repository.
-    repo.git.push()
+    try:
+        repo.git.push()
+        print("Changes successfully pushed to the remote repository.")
+    except git.exc.GitCommandError as e:
+        print(f"Push failed: {e}")
+
+
 
 def main():
     # Get the repository owner, repository name, branch, and file path.
